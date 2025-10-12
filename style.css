@@ -265,3 +265,119 @@ footer {
   padding: 1.5rem;
   font-size: 0.9rem;
 }
+/* ==============================
+   ADAPTACIÓN MÓVIL RESPONSIVE
+   ============================== */
+
+/* Pantallas hasta 1024px (tablets) */
+@media (max-width: 1024px) {
+  #hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  #bigLogo {
+    width: 180px;
+    height: 180px;
+    margin-top: 1rem;
+  }
+
+  .hero-left h1 {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    margin: 0.5rem auto;
+  }
+
+  .nav-container {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem;
+  }
+
+  .nav-menu {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+}
+
+/* Pantallas móviles hasta 768px */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+    overflow-x: hidden;
+  }
+
+  #navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+  }
+
+  #hero {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .section {
+    padding: 2rem 1rem;
+    margin: 1.5rem 0;
+  }
+
+  #sideLogo {
+    width: 200px;
+    height: auto;
+  }
+
+  .form-card {
+    width: 95%;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .contador {
+    width: fit-content;
+    margin: 1rem auto;
+    font-size: 1.2rem;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  footer {
+    font-size: 0.9rem;
+  }
+}
+
+/* Pantallas muy pequeñas (teléfonos pequeños, < 480px) */
+@media (max-width: 480px) {
+  .hero-left h1 {
+    font-size: 1.8rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .nav-logo {
+    font-size: 1rem;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  input, textarea, button {
+    font-size: 0.9rem;
+  }
+}
