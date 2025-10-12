@@ -140,3 +140,28 @@ document.addEventListener("DOMContentLoaded", () => {
     navMenu.classList.toggle("active");
   });
 ;
+// ============= DETECCIÓN DE DISPOSITIVO ============= //
+document.addEventListener('DOMContentLoaded', () => {
+  const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+  const body = document.body;
+
+  if (isMobile) {
+    body.classList.add('mobile');
+    console.log("🌐 Modo móvil activado");
+
+    // Desactivar animaciones pesadas en móvil
+    const intro = document.getElementById('intro');
+    if (intro) {
+      intro.style.animation = 'none';
+    }
+
+    // Ajustar logos o animaciones
+    const plane = document.getElementById('avion');
+    if (plane) {
+      plane.style.transform = 'scale(0.8)';
+    }
+  } else {
+    body.classList.add('desktop');
+    console.log("💻 Modo escritorio activado");
+  }
+});
