@@ -124,3 +124,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// === MENÚ DESPLEGABLE SUPERIOR (MÓVIL) ===
+const hamburger = document.getElementById("hamburger");
+const mobileMenu = document.getElementById("mobileMenu");
+
+if (hamburger && mobileMenu) {
+  hamburger.addEventListener("click", () => {
+    hamburger.classList.toggle("active");
+    mobileMenu.classList.toggle("show");
+  });
+
+  // Cierra el menú al hacer clic en un enlace
+  mobileMenu.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+      mobileMenu.classList.remove("show");
+      hamburger.classList.remove("active");
+    });
+  });
+}
