@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Galería Aérea - FlightTrackers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ====== ESTILO BASE ====== */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #b3e5fc 0%, #e0f7fa 50%, #e3f2fd 100%);
+      color: #0b2e4a;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: #004d99;
+      font-weight: 600;
+    }
+
+    /* ====== NAVBAR ====== */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+    }
+
+    nav .brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #004d99;
+    }
+
+    /* ====== HERO SECCIÓN BIENVENIDA ====== */
+    .hero {
+      text-align: center;
+      background: linear-gradient(135deg, #87cefa, #d1f3ff);
+      padding: 5rem 1rem;
+      color: #004d99;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      animation: fadeInHero 1.5s ease-out forwards;
+    }
+
+    @keyframes fadeInHero {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      margin: 0.5rem 0;
+      text-shadow: 0 2px 8px rgba(255, 255, 255, 0.6);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* ====== GALERÍA ====== */
+    .gallery-page {
+      padding: 3rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .gallery-page h2 {
+      text-align: center;
+      font-size: 2rem;
+      color: #004d99;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .gallery-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .gallery-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .gallery-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+      display: block;
+    }
+
+    .gallery-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .gallery-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.7), transparent);
+      color: white;
+      padding: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .gallery-card:hover .gallery-overlay {
+      opacity: 1;
+    }
+
+    .overlay-author {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .overlay-camera {
+      opacity: 0.9;
+      font-size: 0.9rem;
+    }
+
+    /* ====== LIGHTBOX ====== */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+      text-align: center;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .lightbox-content {
+      display: inline-block;
+      max-width: 95%;
+      margin: 0 auto;
+    }
+
+    .lightbox img {
+      width: auto;
+      max-width: 90%;
+      max-height: 70vh;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+      margin-bottom: 1.5rem;
+    }
+
+    .lightbox .close {
+      position: fixed;
+      top: 25px;
+      right: 40px;
+      color: white;
+      font-size: 2.2rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .lightbox .meta {
+      color: white;
+      text-align: center;
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto 2rem auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .lightbox .meta strong {
+      color: #ffcc00;
+    }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <a href="index.html">← Volver</a>
+    </div>
+    <div class="brand">✈️ FlightTrackers</div>
+  </nav>
+
+  <section class="hero">
+    <h1>Bienvenidos a la Galería FlightTrackers</h1>
+    <p>Explora las mejores capturas de nuestros spotters alrededor de España 🌍</p>
+  </section>
+
+  <main class="gallery-page">
+    <h2>📸 Galería de Spotters</h2>
+    <div id="galleryGrid" class="gallery-grid"></div>
+  </main>
+
+  <!-- MODAL -->
+  <div id="lightbox" class="lightbox">
+    <span id="closeLightbox" class="close">&times;</span>
+    <div class="lightbox-content">
+      <img id="lightboxImg" src="" alt="">
+      <div class="meta" id="lightboxMeta"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const grid = document.getElementById("galleryGrid");
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.getElementById("lightboxImg");
+      const lightboxMeta = document.getElementById("lightboxMeta");
+      const closeBtn = document.getElementById("closeLightbox");
+
+      try {
+        const res = await fetch("/api/gallery");
+        const images = await res.json();
+
+        if (!images.length) {
+          grid.innerHTML = "<p style='text-align:center;font-size:1.2em;color:#555;'>No hay fotos todavía 📭</p>";
+          return;
+        }
+
+        grid.innerHTML = images
+          .map(
+            (img) => `
+            <div class="gallery-card" data-meta='${JSON.stringify(img).replace(/'/g, "&apos;")}'>
+              <img src="${img.url}" alt="${img.name}">
+              <div class="gallery-overlay">
+                <div class="overlay-author">${img.author || "Autor desconocido"}</div>
+                <div class="overlay-camera">${img.camera || "Cámara no especificada"}</div>
+                <div>${img.place || ""}</div>
+              </div>
+            </div>`
+          )
+          .join("");
+
+        // Evento de click en miniaturas
+        document.querySelectorAll(".gallery-card").forEach((card) => {
+          card.addEventListener("click", () => {
+            const meta = JSON.parse(card.getAttribute("data-meta").replace(/&apos;/g, "'"));
+            lightbox.style.display = "block";
+            lightbox.scrollTop = 0;
+            lightboxImg.src = meta.url;
+            lightboxMeta.innerHTML = `
+              <p><strong>Autor:</strong> ${meta.author || "Desconocido"}</p>
+              <p><strong>Cámara:</strong> ${meta.camera || "—"}</p>
+              <p><strong>Lugar:</strong> ${meta.place || "—"}</p>
+              <p><strong>Descripción:</strong> ${meta.description || "Sin descripción"}</p>
+              <p><strong>Fecha:</strong> ${meta.date || "—"}</p>
+            `;
+          });
+        });
+
+        // Cerrar modal
+        closeBtn.addEventListener("click", () => (lightbox.style.display = "none"));
+        lightbox.addEventListener("click", (e) => {
+          if (e.target === lightbox) lightbox.style.display = "none";
+        });
+      } catch (err) {
+        console.error("Error cargando galería:", err);
+        grid.innerHTML = "<p style='text-align:center;color:red;'>Error al cargar las imágenes 😢</p>";
+      }
+    });
+  </script>
+</body>
+</html>

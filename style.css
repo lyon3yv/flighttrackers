@@ -1,0 +1,267 @@
+/* =============================
+   BASE
+============================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  scroll-behavior: smooth;
+  background: linear-gradient(135deg, #eaf8ff, #f9fcff);
+  overflow-x: hidden;
+}
+
+/* =============================
+   ANIMACIÓN INICIAL
+============================= */
+#intro {
+  position: fixed;
+  inset: 0;
+  background: #87cefa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  animation: fadeOut 2s ease 14s forwards;
+  z-index: 1000;
+}
+#cielo {
+  width: 1600px;
+  height: 900px;
+  background: url("https://i.imgur.com/KYkNeql.png") repeat-x center;
+  background-size: cover;
+  animation: a1 15s linear infinite;
+  position: relative;
+}
+#avion {
+  background: url("https://i.imgur.com/G3M0MQs.png") no-repeat center;
+  background-size: contain;
+  width: 100%;
+  height: 320px;
+  position: absolute;
+  top: 60px;
+  animation: fly 8s cubic-bezier(0.55, 0, 0.4, 1) forwards;
+}
+#tierra {
+  width: 1600px;
+  height: 394px;
+  background: url("https://i.imgur.com/2xuMQ7O.png") repeat-x center;
+  background-size: cover;
+  position: absolute;
+  bottom: 0;
+  animation: a1 10s linear infinite;
+}
+.logo {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  font-size: 4.8em; font-weight: 800; text-transform: uppercase;
+  background: linear-gradient(90deg,#ff0000,#ffcc00,#ff0000);
+  background-size: 300% auto; -webkit-background-clip: text; color: transparent;
+  text-shadow: 0 0 40px rgba(255,204,0,0.4);
+  opacity: 0; filter: blur(40px);
+  animation: vaporAppear 5s ease-out 8.3s forwards, shine 5s linear 8.3s infinite;
+}
+@keyframes a1 {0%{background-position:3200px;}100%{background-position:0;}}
+@keyframes fly {
+  0%{transform:translateX(-200px) translateY(150px) rotate(5deg);opacity:1;}
+  100%{transform:translateX(1400px) translateY(-200px) rotate(20deg);opacity:0;}
+}
+@keyframes vaporAppear {0%{opacity:0;filter:blur(40px);}100%{opacity:1;filter:blur(0);}}
+@keyframes shine {0%{background-position:0%}50%{background-position:100%}100%{background-position:0%}}
+@keyframes fadeOut {to{opacity:0;visibility:hidden;}}
+
+/* =============================
+   NAVBAR
+============================= */
+#navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  z-index: 100;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: all .6s ease;
+}
+#navbar.show {transform:translateY(0);opacity:1;}
+.nav-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: .8rem 2rem;
+  display: flex;
+  align-items: center;
+}
+.nav-logo {font-weight:700;color:#004d99;font-size:1.3rem;flex:1;}
+.nav-menu {
+  display:flex;list-style:none;gap:1.8rem;margin-left:auto;
+}
+.nav-menu a {
+  color:#004d99;
+  text-decoration:none;
+  font-weight:600;
+  transition:color 0.3s;
+}
+.nav-menu a:hover {color:#ff0000;}
+#navbar.scrolled {
+  background: rgba(255,255,255,0.98);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  padding: .5rem 2rem;
+}
+
+/* =============================
+   HERO
+============================= */
+#hero {
+  padding-top: 140px;
+  padding-bottom: 80px;
+  background: linear-gradient(135deg, #e0f7ff 0%, #f8fdff 100%);
+  position: relative;
+}
+.hero-content {
+  display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:auto;gap:40px;
+}
+.hero-text h1 {font-size:3rem;color:#004d99;margin-bottom:10px;}
+.subtitle {color:#2c5f8b;font-size:1.1rem;margin-bottom:1.5rem;}
+.members-card {
+  display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:12px 20px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+}
+.members-number {font-size:2rem;font-weight:700;color:#0072c6;}
+.members-label {font-size:.9rem;color:#555;}
+.hero-image img {width:240px;height:240px;object-fit:contain;border-radius:20px;background:#fff;box-shadow:0 6px 25px rgba(0,0,0,0.1);}
+.wave {position:absolute;bottom:-1px;left:0;width:100%;height:100px;background:url('https://svgshare.com/i/ypM.svg') repeat-x;animation:wave 20s linear infinite;}
+.wave1 {opacity:0.3;}
+@keyframes wave {0%{background-position-x:0;}100%{background-position-x:1000px;}}
+
+/* =============================
+   SEPARADORES ENTRE SECCIONES
+============================= */
+.section::after {
+  content: '';
+  display: block;
+  width: 80%;
+  height: 2px;
+  margin: 50px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(0,77,153,0.3), transparent);
+  border-radius: 2px;
+}
+
+/* =============================
+   SOBRE NOSOTROS
+============================= */
+#about {background:linear-gradient(180deg,#f8fdff,#eef8ff);padding:100px 0;text-align:center;}
+#about h2 {color:#004d99;font-size:2.2rem;margin-bottom:1rem;}
+#about p {max-width:700px;margin:0 auto 2rem;color:#355c7d;font-size:1.1rem;}
+.features {display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;}
+.features li {background:#fff;padding:1.5rem 2rem;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,0.05);font-weight:600;width:240px;transition:transform 0.3s;}
+.features li:hover {transform:translateY(-5px);}
+
+/* =============================
+   FORMULARIO
+============================= */
+#join {
+  background: linear-gradient(180deg, #eef8ff, #ffffff);
+  padding: 100px 0;
+  text-align: center;
+}
+.join-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding-right: 20px; /* evita corte lateral derecho */
+  box-sizing: border-box;
+}
+.join-text h2 {color:#004d99;font-size:2rem;margin-bottom:10px;}
+
+.form-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
+  padding: 35px 28px;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  max-width: 440px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/* Campos */
+.form-card input,
+.form-card textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #dce6ef;
+  background: #f9fcff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+.form-card input:focus,
+.form-card textarea:focus {
+  outline: none;
+  border-color: #0072c6;
+  box-shadow: 0 0 8px rgba(0, 114, 198, 0.2);
+  background: #ffffff;
+}
+
+/* Textarea */
+textarea {
+  resize: none;
+  min-height: 110px;
+  padding-bottom: 16px;
+}
+
+/* Radio buttons */
+.radio-row {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+  color: #004d99;
+}
+
+/* Botón */
+.primary-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #0072c6, #0096ff);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 118, 204, 0.25);
+}
+
+/* Estado del formulario */
+.estado {
+  margin-top: 10px;
+  text-align: center;
+  color: #004d99;
+  font-weight: 600;
+}
+
+/* =============================
+   FOOTER
+============================= */
+footer {
+  background: #004d99;
+  color: white;
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.9rem;
+}

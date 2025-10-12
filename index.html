@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FlightTrackers - Comunidad de Spotters</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- INTRO ANIMADA -->
+  <div id="intro">
+    <div id="cielo">
+      <div id="avion"></div>
+      <div id="tierra"></div>
+    </div>
+    <div class="logo">FlightTrackers</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">FlightTrackers ✈️</div>
+      <ul class="nav-menu">
+        <li><a href="#hero">Inicio</a></li>
+        <li><a href="#about">Nosotros</a></li>
+        <li><a href="#join">Únete</a></li>
+        <li><a href="gallery.html">Galería</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>FlightTrackers</h1>
+        <p class="subtitle">📍 Comunidad de spotters en Madrid — unidos por la pasión de volar y fotografiar los cielos.</p>
+
+        <div class="members-card">
+          <div class="members-icon">👥</div>
+          <div class="members-info">
+            <div id="counter" class="members-number">0</div>
+            <div class="members-label">Miembros registrados</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="logo1.png" alt="Logo FlightTrackers">
+      </div>
+    </div>
+    <div class="wave wave1"></div>
+  </header>
+
+  <!-- SOBRE NOSOTROS -->
+  <section id="about" class="section">
+    <div class="container about-container">
+      <h2>¿Quiénes somos?</h2>
+      <p>Somos una comunidad de amantes de la aviación y la fotografía aérea. Compartimos conocimientos, experiencias y las mejores capturas de los cielos. Nuestro objetivo es conectar spotters de todo el mundo.</p>
+      <ul class="features">
+        <li>📸 Fotografía profesional de spotting</li>
+        <li>🛫 Seguimiento de vuelos en tiempo real</li>
+        <li>🤝 Comunidad internacional y colaborativa</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ÚNETE -->
+  <section id="join" class="section">
+    <div class="join-content">
+      <div class="join-text">
+        <h2>Únete a nuestra comunidad</h2>
+        <p>Forma parte del grupo de spotters más activo de España. Completa el formulario y da el primer paso hacia los cielos.</p>
+      </div>
+
+      <div class="form-card">
+        <form id="joinForm">
+          <input type="email" name="email" placeholder="Correo electrónico *" required>
+          <input type="number" name="edad" min="11" max="25" placeholder="Edad (11 - 25) *" required>
+          <input type="date" name="fecha">
+          <input type="tel" name="telefono" placeholder="Número de teléfono">
+          <input type="text" name="instagram" placeholder="Instagram (@usuario)">
+          <input type="text" name="nombre" placeholder="Nombre completo">
+          <textarea name="sobre" placeholder="Cuéntanos algo sobre ti"></textarea>
+          <input type="text" name="aeropuerto" placeholder="Aeropuerto donde haces spotting *" required>
+
+          <div class="radio-row">
+            <label><input type="radio" name="sigue_instagram" value="sí" required> Sí ✅</label>
+            <label><input type="radio" name="sigue_instagram" value="no" required> Todavía no 🥲</label>
+          </div>
+
+          <button type="submit" class="primary-btn">Enviar solicitud</button>
+          <p id="estado" class="estado"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 FlightTrackers — Unidos por el cielo ✈️</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
