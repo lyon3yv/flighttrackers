@@ -1,39 +1,42 @@
-// script.js
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ DOM cargado");
-
-  // ===============================
-  // NAVBAR (aparece tras la intro)
-  // ===============================
+  const introEl = document.getElementById("intro");
   const navbar = document.getElementById("navbar");
-  if (navbar && window.location.pathname === "/") {
-    setTimeout(() => navbar.classList.add("show"), 15000); // 15s
-  }
-  window.addEventListener('scroll', () => {
-    const nav = document.getElementById('navbar');
-    if (window.scrollY > 60) nav.classList.add('scrolled');
-    else nav.classList.remove('scrolled');
-  });
-  // ===============================
-  // CONTADOR EN INDEX
-  // ===============================
-  const target = 53;
-  const el = document.getElementById('counter');
-  let current = 0;
-  const stepTime = 40;
-  const step = () => {
-    if (current < target) {
-      current++;
-      el.textContent = current;
-      setTimeout(step, stepTime);
-    } else el.textContent = target;
-  };
-  step();
-});
+  const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+  const INTRO_TOTAL_MS = isMobile ? 6200 : 15000;
 
-  // ===============================
-  // FORMULARIO DE INSCRIPCIÓN
-  // ===============================
+  function showNavbarAndHideIntro() {
+    if (introEl) introEl.style.display = "none";
+    navbar?.classList.add("show");
+    if (typeof window.startMembersCounter === "function") window.startMembersCounter();
+  }
+
+  if (introEl) {
+    introEl.addEventListener("animationend", (e) => {
+      if (e.animationName === "fadeOut") showNavbarAndHideIntro();
+    });
+  }
+  setTimeout(showNavbarAndHideIntro, INTRO_TOTAL_MS + 800);
+
+  const el = document.getElementById("counter");
+  window.startMembersCounter = function () {
+    const target = 53;
+    let current = 0;
+    const stepTime = 40;
+    const step = () => {
+      if (current < target) {
+        current++;
+        el.textContent = current;
+        setTimeout(step, stepTime);
+      } else el.textContent = target;
+    };
+    step();
+  };
+
+  if (!introEl) {
+    navbar?.classList.add("show");
+    window.startMembersCounter();
+  }
+
   const form = document.getElementById("joinForm");
   const status = document.getElementById("estado");
   if (form) {
@@ -43,13 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData(form);
       const payload = {};
       formData.forEach((v, k) => (payload[k] = v));
-
       const edad = parseInt(payload.edad, 10);
       if (isNaN(edad) || edad < 11 || edad > 25) {
         status.textContent = "La edad debe ser entre 11 y 25 años.";
         return;
       }
-
       try {
         const res = await fetch("/api/join", {
           method: "POST",
@@ -69,13 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===============================
-  // GALERÍA (solo en /galeria)
-  // ===============================
   const galleryGrid = document.getElementById("galleryGrid");
   if (galleryGrid) {
-    console.log("📸 Cargando galería...");
-
     fetch("/api/gallery")
       .then((res) => res.json())
       .then((images) => {
@@ -84,19 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
             "<p style='text-align:center;font-size:1.2em;color:#555;'>No hay fotos publicadas aún 📭</p>";
           return;
         }
-
-        // Crear miniaturas
         galleryGrid.innerHTML = images
           .map(
             (img) => `
             <div class="gallery-item">
               <img src="${img.url}" alt="${img.name}" loading="lazy">
-            </div>
-          `
+            </div>`
           )
           .join("");
-
-        // === Lightbox ===
         const lightbox = document.createElement("div");
         lightbox.className = "lightbox";
         lightbox.innerHTML = `
@@ -104,64 +95,31 @@ document.addEventListener("DOMContentLoaded", () => {
           <img id="lightboxImg" src="" alt="">
         `;
         document.body.appendChild(lightbox);
-
         const lightboxImg = lightbox.querySelector("img");
         const closeBtn = lightbox.querySelector(".close");
-
         galleryGrid.querySelectorAll("img").forEach((image) => {
           image.addEventListener("click", () => {
             lightbox.style.display = "flex";
             lightboxImg.src = image.src;
           });
         });
-
         closeBtn.addEventListener("click", () => {
           lightbox.style.display = "none";
         });
-
         lightbox.addEventListener("click", (e) => {
           if (e.target === lightbox) lightbox.style.display = "none";
         });
       })
-      .catch((err) => {
-        console.error("❌ Error al cargar galería:", err);
+      .catch(() => {
         galleryGrid.innerHTML =
           "<p style='text-align:center;color:red;'>Error al cargar imágenes 😢</p>";
       });
   }
 
-  // ===============================
-  // MENÚ MÓVIL
-  // ===============================
   const hamburger = document.getElementById("hamburger");
   const navMenu = document.querySelector(".nav-menu");
   hamburger?.addEventListener("click", () => {
     hamburger.classList.toggle("active");
     navMenu.classList.toggle("active");
   });
-;
-// ============= DETECCIÓN DE DISPOSITIVO ============= //
-document.addEventListener('DOMContentLoaded', () => {
-  const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(navigator.userAgent);
-  const body = document.body;
-
-  if (isMobile) {
-    body.classList.add('mobile');
-    console.log("🌐 Modo móvil activado");
-
-    // Desactivar animaciones pesadas en móvil
-    const intro = document.getElementById('intro');
-    if (intro) {
-      intro.style.animation = 'none';
-    }
-
-    // Ajustar logos o animaciones
-    const plane = document.getElementById('avion');
-    if (plane) {
-      plane.style.transform = 'scale(0.8)';
-    }
-  } else {
-    body.classList.add('desktop');
-    console.log("💻 Modo escritorio activado");
-  }
 });
