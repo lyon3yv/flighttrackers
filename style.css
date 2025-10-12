@@ -1,6 +1,3 @@
-/* =============================
-   BASE
-============================= */
 html, body {
   margin: 0;
   padding: 0;
@@ -70,6 +67,15 @@ html, body {
 @keyframes shine {0%{background-position:0%}50%{background-position:100%}100%{background-position:0%}}
 @keyframes fadeOut {to{opacity:0;visibility:hidden;}}
 
+/* Adaptación móvil para la animación */
+@media (max-width: 768px) {
+  #intro { animation: fadeOut 1s ease 6s forwards; }
+  #cielo { width: 100vw; height: 60vh; }
+  #tierra { width: 100vw; height: 20vh; }
+  #avion { height: 22vh; top: 10vh; }
+  .logo { font-size: 2.4em; letter-spacing: 2px; text-shadow: 0 0 15px rgba(0,0,0,0.35), 0 0 25px rgba(255,204,0,0.3); }
+}
+
 /* =============================
    NAVBAR
 ============================= */
@@ -86,29 +92,12 @@ html, body {
   transition: all .6s ease;
 }
 #navbar.show {transform:translateY(0);opacity:1;}
-.nav-container {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: .8rem 2rem;
-  display: flex;
-  align-items: center;
-}
+.nav-container {max-width:1300px;margin:0 auto;padding:.8rem 2rem;display:flex;align-items:center;}
 .nav-logo {font-weight:700;color:#004d99;font-size:1.3rem;flex:1;}
-.nav-menu {
-  display:flex;list-style:none;gap:1.8rem;margin-left:auto;
-}
-.nav-menu a {
-  color:#004d99;
-  text-decoration:none;
-  font-weight:600;
-  transition:color 0.3s;
-}
+.nav-menu {display:flex;list-style:none;gap:1.8rem;margin-left:auto;}
+.nav-menu a {color:#004d99;text-decoration:none;font-weight:600;transition:color .3s;}
 .nav-menu a:hover {color:#ff0000;}
-#navbar.scrolled {
-  background: rgba(255,255,255,0.98);
-  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-  padding: .5rem 2rem;
-}
+#navbar.scrolled {background:rgba(255,255,255,0.98);box-shadow:0 4px 18px rgba(0,0,0,0.08);padding:.5rem 2rem;}
 
 /* =============================
    HERO
@@ -136,19 +125,6 @@ html, body {
 @keyframes wave {0%{background-position-x:0;}100%{background-position-x:1000px;}}
 
 /* =============================
-   SEPARADORES ENTRE SECCIONES
-============================= */
-.section::after {
-  content: '';
-  display: block;
-  width: 80%;
-  height: 2px;
-  margin: 50px auto 0;
-  background: linear-gradient(90deg, transparent, rgba(0,77,153,0.3), transparent);
-  border-radius: 2px;
-}
-
-/* =============================
    SOBRE NOSOTROS
 ============================= */
 #about {background:linear-gradient(180deg,#f8fdff,#eef8ff);padding:100px 0;text-align:center;}
@@ -174,11 +150,10 @@ html, body {
   justify-content: center;
   flex-wrap: wrap;
   gap: 40px;
-  padding-right: 20px; /* evita corte lateral derecho */
+  padding-right: 20px;
   box-sizing: border-box;
 }
 .join-text h2 {color:#004d99;font-size:2rem;margin-bottom:10px;}
-
 .form-card {
   background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
   padding: 35px 28px;
@@ -191,8 +166,6 @@ html, body {
   position: relative;
   z-index: 1;
 }
-
-/* Campos */
 .form-card input,
 .form-card textarea {
   width: 100%;
@@ -206,30 +179,7 @@ html, body {
   transition: all 0.25s ease;
   box-sizing: border-box;
 }
-.form-card input:focus,
-.form-card textarea:focus {
-  outline: none;
-  border-color: #0072c6;
-  box-shadow: 0 0 8px rgba(0, 114, 198, 0.2);
-  background: #ffffff;
-}
-
-/* Textarea */
-textarea {
-  resize: none;
-  min-height: 110px;
-  padding-bottom: 16px;
-}
-
-/* Radio buttons */
-.radio-row {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 10px;
-  color: #004d99;
-}
-
-/* Botón */
+textarea {resize: none;min-height: 110px;}
 .primary-btn {
   width: 100%;
   background: linear-gradient(90deg, #0072c6, #0096ff);
@@ -242,142 +192,23 @@ textarea {
   font-weight: 600;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.primary-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 118, 204, 0.25);
-}
-
-/* Estado del formulario */
-.estado {
-  margin-top: 10px;
-  text-align: center;
-  color: #004d99;
-  font-weight: 600;
-}
+.primary-btn:hover {transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,118,204,0.25);}
+.estado {margin-top:10px;text-align:center;color:#004d99;font-weight:600;}
 
 /* =============================
    FOOTER
 ============================= */
-footer {
-  background: #004d99;
-  color: white;
-  text-align: center;
-  padding: 1.5rem;
-  font-size: 0.9rem;
-}
-/* ==============================
-   ADAPTACIÓN MÓVIL RESPONSIVE
-   ============================== */
+footer {background:#004d99;color:white;text-align:center;padding:1.5rem;font-size:0.9rem;}
 
-/* Pantallas hasta 1024px (tablets) */
-@media (max-width: 1024px) {
-  #hero {
-    flex-direction: column;
-    text-align: center;
-    padding: 2rem 1rem;
-  }
-
-  #bigLogo {
-    width: 180px;
-    height: 180px;
-    margin-top: 1rem;
-  }
-
-  .hero-left h1 {
-    font-size: 2rem;
-  }
-
-  .subtitle {
-    font-size: 1rem;
-    margin: 0.5rem auto;
-  }
-
-  .nav-container {
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 1rem;
-  }
-
-  .nav-menu {
-    display: none;
-  }
-
-  .hamburger {
-    display: flex;
-  }
-}
-
-/* Pantallas móviles hasta 768px */
+/* =============================
+   RESPONSIVE
+============================= */
 @media (max-width: 768px) {
-  body {
-    font-size: 14px;
-    overflow-x: hidden;
-  }
-
-  #navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 9999;
-  }
-
-  #hero {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem;
-  }
-
-  .section {
-    padding: 2rem 1rem;
-    margin: 1.5rem 0;
-  }
-
-  #sideLogo {
-    width: 200px;
-    height: auto;
-  }
-
-  .form-card {
-    width: 95%;
-    margin: 0 auto;
-    padding: 1.5rem;
-  }
-
-  .contador {
-    width: fit-content;
-    margin: 1rem auto;
-    font-size: 1.2rem;
-  }
-
-  .gallery-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  footer {
-    font-size: 0.9rem;
-  }
+  #hero {flex-direction:column;text-align:center;padding:2rem 1rem;}
+  .hero-text h1 {font-size:2rem;}
+  .hero-image img {width:180px;height:180px;}
+  #about p {padding:0 1rem;}
+  .form-card {width:95%;margin:0 auto;padding:1.5rem;}
+  .features li {width:90%;}
 }
 
-/* Pantallas muy pequeñas (teléfonos pequeños, < 480px) */
-@media (max-width: 480px) {
-  .hero-left h1 {
-    font-size: 1.8rem;
-  }
-
-  .subtitle {
-    font-size: 0.9rem;
-  }
-
-  .nav-logo {
-    font-size: 1rem;
-  }
-
-  .gallery-grid {
-    grid-template-columns: 1fr;
-  }
-
-  input, textarea, button {
-    font-size: 0.9rem;
-  }
-}
