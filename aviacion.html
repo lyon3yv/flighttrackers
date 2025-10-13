@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Noticias de Aviación</title>
+  <!-- Tailwind via CDN para estilos limpios -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="Noticias de aviación actualizadas automáticamente cada día.">
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <header class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold tracking-tight">Noticias de Aviación</h1>
+    <p class="text-gray-600 mt-2">Se actualiza automáticamente. Sin escribir nada.</p>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pb-16">
+    <div class="flex items-center gap-3 mb-6">
+      <label for="limit" class="text-sm text-gray-600">Noticias por día:</label>
+      <select id="limit" class="border rounded-lg px-3 py-2">
+        <option>10</option>
+        <option selected>20</option>
+        <option>30</option>
+      </select>
+      <button id="refreshBtn" class="ml-auto bg-black text-white rounded-xl px-4 py-2">Actualizar</button>
+    </div>
+
+    <div id="status" class="text-sm text-gray-500 mb-4">Cargando noticias…</div>
+
+    <section id="newsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></section>
+  </main>
+
+  <script>
+    const WORKER_URL = "https://still-cloud-1375.developercontactmee.workers.dev/";
+    const grid = document.getElementById("newsGrid");
+    const statusEl = document.getElementById("status");
+    const limitSel = document.getElementById("limit");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    async function loadNews() {
+      const limit = parseInt(limitSel.value, 10) || 20;
+      statusEl.textContent = "Cargando noticias…";
+      grid.innerHTML = "";
+
+      try {
+        const res = await fetch(`${WORKER_URL}/?limit=${limit}`);
+        if (!res.ok) throw new Error("Error al obtener noticias");
+        const data = await res.json();
+        statusEl.textContent = `Mostrando ${data.count} noticias recientes.`;
+
+        if (!data.items || data.items.length === 0) {
+          grid.innerHTML = `<div class="col-span-full text-gray-500">No hay noticias recientes por ahora.</div>`;
+          return;
+        }
+
+        for (const item of data.items) {
+          const card = document.createElement("article");
+          card.className = "bg-white rounded-2xl shadow-sm border hover:shadow-md transition p-5 flex flex-col";
+
+          const title = document.createElement("a");
+          title.href = item.link;
+          title.target = "_blank";
+          title.rel = "noopener";
+          title.className = "font-semibold text-lg leading-snug hover:underline";
+          title.textContent = item.title || "Ver noticia";
+
+          const meta = document.createElement("div");
+          meta.className = "text-xs text-gray-500 mt-2";
+          meta.textContent = [item.source, timeAgo(item.pubDate)].filter(Boolean).join(" • ");
+
+          const desc = document.createElement("p");
+          desc.className = "text-sm text-gray-700 mt-3 line-clamp-4";
+          desc.textContent = item.description || "";
+
+          if (item.image) {
+            const img = document.createElement("img");
+            img.src = item.image;
+            img.alt = "";
+            img.loading = "lazy";
+            img.className = "w-full h-40 object-cover rounded-xl mb-3";
+            card.appendChild(img);
+          }
+
+          card.appendChild(title);
+          card.appendChild(meta);
+          if (item.description) card.appendChild(desc);
+
+          const cta = document.createElement("a");
+          cta.href = item.link;
+          cta.target = "_blank";
+          cta.rel = "noopener";
+          cta.className = "mt-4 inline-flex items-center gap-2 text-sm font-medium text-blue-700 hover:underline";
+          cta.innerHTML = `Leer en origen<span aria-hidden>↗</span>`;
+          card.appendChild(cta);
+
+          grid.appendChild(card);
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "No se pudieron cargar las noticias. Intenta más tarde.";
+      }
+    }
+
+    function timeAgo(iso) {
+      try {
+        const t = new Date(iso).getTime();
+        const diff = Date.now() - t;
+        const mins = Math.round(diff / 60000);
+        if (mins < 60) return `hace ${mins} min`;
+        const hrs = Math.round(mins / 60);
+        if (hrs < 24) return `hace ${hrs} h`;
+        const days = Math.round(hrs / 24);
+        return `hace ${days} d`;
+      } catch {
+        return "";
+      }
+    }
+
+    limitSel.addEventListener("change", loadNews);
+    refreshBtn.addEventListener("click", loadNews);
+    loadNews();
+  </script>
+</body>
+</html>
