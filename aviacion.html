@@ -3,102 +3,136 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Noticias de Aviación</title>
-  <!-- Tailwind via CDN para estilos limpios -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <meta name="description" content="Noticias de aviación actualizadas cada día.">
+  <title>📰 Noticias de Aviación - FlightTrackers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="Últimas noticias de aviación actualizadas automáticamente. Comunidad de spotters.">
 </head>
-<body class="bg-gray-50 text-gray-900">
-  <header class="max-w-6xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold tracking-tight">Noticias de Aviación</h1>
-    <p class="text-gray-600 mt-2">Se actualiza automáticamente. </p>
+<body>
+  <!-- INTRO ANIMADA -->
+  <div id="intro">
+    <div id="cielo">
+      <div id="avion"></div>
+      <div id="tierra"></div>
+    </div>
+    <div class="logo">FlightTrackers</div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">FlightTrackers ✈️</div>
+      <ul class="nav-menu">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="#about">Nosotros</a></li>
+        <li><a href="#join">Únete</a></li>
+        <li><a href="gallery.html">Galería</a></li>
+        <li><a href="#news">📰 Noticias</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MENÚ LATERAL MÓVIL -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Inicio</a>
+    <a href="#about">Nosotros</a>
+    <a href="#join">Únete</a>
+    <a href="gallery.html">Galería</a>
+    <a href="#news">📰 Noticias</a>
+  </div>
+
+  <!-- HERO NOTICIAS -->
+  <header id="news-hero" class="section">
+    <div class="news-hero-content">
+      <div class="news-hero-text">
+        <h1> Últimas Noticias de Aviación</h1>
+        <p class="news-subtitle">Mantente al día con las novedades del mundo de la aviación. Actualizado automáticamente.</p>
+        <div class="news-stats">
+          <div class="stat-card">
+            <div class="stat-icon">📰</div>
+            <div class="stat-info">
+              <div id="news-count" class="stat-number">0</div>
+              <div class="stat-label">Noticias hoy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 pb-16">
-    <div class="flex items-center gap-3 mb-6">
-      <label for="limit" class="text-sm text-gray-600">Noticias por día:</label>
-      <select id="limit" class="border rounded-lg px-3 py-2">
-        <option>10</option>
-        <option selected>20</option>
-        <option>30</option>
-      </select>
-      <button id="refreshBtn" class="ml-auto bg-black text-white rounded-xl px-4 py-2">Actualizar</button>
+
+
+  <!-- GRID DE NOTICIAS -->
+  <section id="news-section" class="section">
+    <div class="container">
+      <div id="newsGrid" class="news-grid"></div>
     </div>
+  </section>
 
-    <div id="status" class="text-sm text-gray-500 mb-4">Cargando noticias…</div>
+  <footer>
+    <p>&copy; 2025 FlightTrackers — Unidos por el cielo ✈️</p>
+  </footer>
 
-    <section id="newsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></section>
-  </main>
+  <script src="script.js"></script>
 
   <script>
     const WORKER_URL = "https://still-cloud-1375.developercontactmee.workers.dev/";
     const grid = document.getElementById("newsGrid");
-    const statusEl = document.getElementById("status");
-    const limitSel = document.getElementById("limit");
-    const refreshBtn = document.getElementById("refreshBtn");
+    const newsCountEl = document.getElementById("news-count");
 
     async function loadNews() {
-      const limit = parseInt(limitSel.value, 10) || 20;
-      statusEl.textContent = "Cargando noticias…";
       grid.innerHTML = "";
 
       try {
-        const res = await fetch(`${WORKER_URL}/?limit=${limit}`);
+        const res = await fetch(`${WORKER_URL}/?limit=20`);
         if (!res.ok) throw new Error("Error al obtener noticias");
         const data = await res.json();
-        statusEl.textContent = `Mostrando ${data.count} noticias recientes.`;
+        const allNews = data.items || [];
+        newsCountEl.textContent = data.count || 0;
 
-        if (!data.items || data.items.length === 0) {
-          grid.innerHTML = `<div class="col-span-full text-gray-500">No hay noticias recientes por ahora.</div>`;
+        if (!allNews.length) {
+          grid.innerHTML = `<div class="no-news">No hay noticias recientes por ahora.</div>`;
           return;
         }
 
-        for (const item of data.items) {
+        for (const item of allNews) {
           const card = document.createElement("article");
-          card.className = "bg-white rounded-2xl shadow-sm border hover:shadow-md transition p-5 flex flex-col";
+          card.className = "news-card";
 
-          const title = document.createElement("a");
-          title.href = item.link;
-          title.target = "_blank";
-          title.rel = "noopener";
-          title.className = "font-semibold text-lg leading-snug hover:underline";
-          title.textContent = item.title || "Ver noticia";
+          const imgHtml = item.image ? `<img src="${item.image}" alt="" loading="lazy" class="news-image">` : '';
 
-          const meta = document.createElement("div");
-          meta.className = "text-xs text-gray-500 mt-2";
-          meta.textContent = [item.source, timeAgo(item.pubDate)].filter(Boolean).join(" • ");
+          const categoryTag = categorizeNews(item) ? `<span class="news-category">${categorizeNews(item)}</span>` : '';
 
-          const desc = document.createElement("p");
-          desc.className = "text-sm text-gray-700 mt-3 line-clamp-4";
-          desc.textContent = item.description || "";
-
-          if (item.image) {
-            const img = document.createElement("img");
-            img.src = item.image;
-            img.alt = "";
-            img.loading = "lazy";
-            img.className = "w-full h-40 object-cover rounded-xl mb-3";
-            card.appendChild(img);
-          }
-
-          card.appendChild(title);
-          card.appendChild(meta);
-          if (item.description) card.appendChild(desc);
-
-          const cta = document.createElement("a");
-          cta.href = item.link;
-          cta.target = "_blank";
-          cta.rel = "noopener";
-          cta.className = "mt-4 inline-flex items-center gap-2 text-sm font-medium text-blue-700 hover:underline";
-          cta.innerHTML = `Leer en origen<span aria-hidden>↗</span>`;
-          card.appendChild(cta);
+          card.innerHTML = `
+            ${imgHtml}
+            <div class="news-content">
+              <div class="news-header">
+                <h3 class="news-title"><a href="${item.link}" target="_blank" rel="noopener">${item.title || "Ver noticia"}</a></h3>
+                ${categoryTag}
+              </div>
+              <div class="news-meta">${[item.source, timeAgo(item.pubDate)].filter(Boolean).join(" • ")}</div>
+              <p class="news-desc">${item.description || ""}</p>
+              <a href="${item.link}" target="_blank" rel="noopener" class="news-cta">Leer más ↗</a>
+            </div>
+          `;
 
           grid.appendChild(card);
         }
       } catch (err) {
         console.error(err);
-        statusEl.textContent = "No se pudieron cargar las noticias. Intenta más tarde.";
+        grid.innerHTML = `<div class="no-news">No se pudieron cargar las noticias. Intenta más tarde.</div>`;
       }
+    }
+
+    function categorizeNews(item) {
+      const title = item.title.toLowerCase();
+      const desc = item.description.toLowerCase();
+      if (title.includes('militar') || desc.includes('militar') || title.includes('f-') || desc.includes('f-')) return 'Militar';
+      if (title.includes('comercial') || desc.includes('comercial') || title.includes('airlines') || desc.includes('airlines')) return 'Comercial';
+      return 'General';
     }
 
     function timeAgo(iso) {
@@ -116,9 +150,9 @@
       }
     }
 
-    limitSel.addEventListener("change", loadNews);
-    refreshBtn.addEventListener("click", loadNews);
     loadNews();
   </script>
+</body>
+</html>
 </body>
 </html>
