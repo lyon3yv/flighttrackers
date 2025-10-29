@@ -4,19 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|Windows Phone/i.test(navigator.userAgent);
   const INTRO_TOTAL_MS = isMobile ? 6200 : 15000;
 
-  function showNavbarAndHideIntro() {
-    if (introEl) introEl.style.display = "none";
-    navbar?.classList.add("show");
-    if (typeof window.startMembersCounter === "function") window.startMembersCounter();
-  }
-
-  if (introEl) {
-    introEl.addEventListener("animationend", (e) => {
-      if (e.animationName === "fadeOut") showNavbarAndHideIntro();
-    });
-  }
-  setTimeout(showNavbarAndHideIntro, INTRO_TOTAL_MS + 800);
-
   const el = document.getElementById("counter");
   window.startMembersCounter = function () {
     const target = 53;
@@ -31,6 +18,34 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     step();
   };
+
+  function showNavbarAndHideIntro() {
+    if (introEl) introEl.style.display = "none";
+    navbar?.classList.add("show");
+    if (typeof window.startMembersCounter === "function") window.startMembersCounter();
+  }
+
+  // Check if intro has been seen before
+  const hasSeenIntro = localStorage.getItem('hasSeenIntro');
+
+  if (hasSeenIntro) {
+    // Skip intro, show navbar immediately
+    showNavbarAndHideIntro();
+  } else {
+    // Show intro and set flag after it ends
+    if (introEl) {
+      introEl.addEventListener("animationend", (e) => {
+        if (e.animationName === "fadeOut") {
+          localStorage.setItem('hasSeenIntro', 'true');
+          showNavbarAndHideIntro();
+        }
+      });
+    }
+    setTimeout(() => {
+      localStorage.setItem('hasSeenIntro', 'true');
+      showNavbarAndHideIntro();
+    }, INTRO_TOTAL_MS + 800);
+  }
 
   if (!introEl) {
     navbar?.classList.add("show");
