@@ -1,4 +1,4 @@
-// server.js
+// ======================== IMPORTS Y CONFIG ========================
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
@@ -8,11 +8,13 @@ const sharp = require('sharp');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const ImageKit = require('imagekit');
 const { Resend } = require('resend');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ======================== MIDDLEWARES ========================
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,6 +25,13 @@ app.use(session({
   saveUninitialized: false,
   cookie: { secure: false }
 }));
+
+// ======================== IMAGEKIT CONFIG ========================
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+});
 
 // ======================== CONFIGURACIÓN DE SUBIDAS ========================
 const UPLOAD_DIR = path.join(__dirname, 'uploads');
@@ -74,38 +83,6 @@ function requireAdmin(req, res, next) {
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/galeria', (req, res) => res.sendFile(path.join(__dirname, 'gallery.html')));
 
-// ======================== FORMULARIO JOIN ========================
-app.post('/api/join', async (req, res) => {
-  const d = req.body;
-  const edad = parseInt(d.edad, 10);
-  if (isNaN(edad) || edad < 11 || edad > 25)
-    return res.status(400).json({ success: false, message: 'La edad debe estar entre 11 y 25 años.' });
-
-  if (process.env.RESEND_API_KEY) {
-    try {
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      const html = `
-        <h2>Nuevo miembro (FlightTrackers)</h2>
-        <p><strong>Nombre:</strong> ${d.nombre || ''}</p>
-        <p><strong>Email:</strong> ${d.email}</p>
-        <p><strong>Edad:</strong> ${d.edad}</p>
-        <p><strong>Teléfono:</strong> ${d.telefono || '—'}</p>
-        <p><strong>Instagram:</strong> ${d.instagram || '—'}</p>
-        <p><strong>Aeropuerto:</strong> ${d.aeropuerto || '—'}</p>
-        <p><strong>Sobre:</strong> ${d.sobre || '—'}</p>`;
-      await resend.emails.send({
-        from: 'onboarding@resend.dev',
-        to: 'flighttrackersspotters@gmail.com',
-        subject: `Nuevo miembro: ${d.nombre || d.email}`,
-        html
-      });
-    } catch (err) {
-      console.error('Error enviando correo:', err);
-    }
-  }
-  return res.json({ success: true, message: 'Solicitud recibida. Pronto te contactaremos.' });
-});
-
 // ======================== LOGIN ADMIN ========================
 app.get('/admin/login', (req, res) => {
   const html = `<!doctype html><html><head><meta charset="utf-8"><title>Admin Login</title>
@@ -131,16 +108,14 @@ app.post('/admin/login', (req, res) => {
 
 // ======================== PANEL ADMIN ========================
 app.get('/admin', requireAdmin, (req, res) => {
-  const files = fs.readdirSync(UPLOAD_DIR).filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f));
+  const files = fs.readdirSync(UPLOAD_DIR).filter(f => f.endsWith('.json'));
   const listHtml = files.map(f => {
-    const metaPath = path.join(UPLOAD_DIR, f + '.json');
-    let meta = {};
-    if (fs.existsSync(metaPath)) meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
+    const meta = JSON.parse(fs.readFileSync(path.join(UPLOAD_DIR, f), 'utf-8'));
     return `
       <div style="margin:10px;text-align:center;">
-        <img src="/uploads/${encodeURIComponent(f)}" style="width:220px;height:140px;object-fit:cover;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,0.15)"/>
+        <img src="${meta.url}" style="width:220px;height:140px;object-fit:cover;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,0.15)"/>
         <div style="font-size:13px;margin-top:6px;color:#333">
-          ${meta.author || 'Sin autor'}<br>${f}
+          ${meta.author || 'Sin autor'}<br>${f.replace('.json','')}
         </div>
         <form method="POST" action="/admin/delete/${encodeURIComponent(f)}" onsubmit="return confirm('¿Eliminar esta imagen?')">
           <button type="submit" style="margin-top:6px;background:#e53935;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;">🗑️ Eliminar</button>
@@ -180,26 +155,37 @@ app.get('/admin', requireAdmin, (req, res) => {
   res.send(html);
 });
 
-// ======================== SUBIDA CON METADATOS ========================
+// ======================== SUBIDA CON IMAGEKIT ========================
 app.post('/admin/upload', requireAdmin, upload.single('photo'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).send('No se subió archivo');
     const filePath = path.join(UPLOAD_DIR, req.file.filename);
+
     await addWatermark(filePath);
+
+    const uploaded = await imagekit.upload({
+      file: fs.readFileSync(filePath),
+      fileName: req.file.filename,
+      folder: "/flighttrackers",
+    });
+
+    fs.unlinkSync(filePath);
 
     const meta = {
       author: req.body.author || 'Desconocido',
       camera: req.body.camera || 'No especificada',
       place: req.body.place || '—',
       description: req.body.description || '',
-      date: new Date().toLocaleString('es-ES')
+      date: new Date().toLocaleString('es-ES'),
+      url: uploaded.url,
     };
-    fs.writeFileSync(filePath + '.json', JSON.stringify(meta, null, 2));
 
-    return res.redirect('/admin');
+    fs.writeFileSync(path.join(UPLOAD_DIR, req.file.filename + '.json'), JSON.stringify(meta, null, 2));
+
+    res.redirect('/admin');
   } catch (err) {
     console.error(err);
-    return res.status(500).send('Error subiendo la imagen');
+    res.status(500).send('Error subiendo la imagen a ImageKit');
   }
 });
 
@@ -207,9 +193,7 @@ app.post('/admin/upload', requireAdmin, upload.single('photo'), async (req, res)
 app.post('/admin/delete/:filename', requireAdmin, (req, res) => {
   try {
     const fileName = req.params.filename;
-    const filePath = path.join(UPLOAD_DIR, fileName);
-    const metaPath = filePath + '.json';
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    const metaPath = path.join(UPLOAD_DIR, fileName);
     if (fs.existsSync(metaPath)) fs.unlinkSync(metaPath);
     console.log(`🗑️ Imagen eliminada: ${fileName}`);
     res.redirect('/admin');
@@ -220,16 +204,10 @@ app.post('/admin/delete/:filename', requireAdmin, (req, res) => {
 });
 
 // ======================== API GALERÍA ========================
-app.use('/uploads', express.static(UPLOAD_DIR));
 app.get('/api/gallery', (req, res) => {
   const files = fs.readdirSync(UPLOAD_DIR)
-    .filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f))
-    .map(f => {
-      const metaPath = path.join(UPLOAD_DIR, f + '.json');
-      let meta = {};
-      if (fs.existsSync(metaPath)) meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
-      return { url: '/uploads/' + encodeURIComponent(f), name: f, ...meta };
-    });
+    .filter(f => f.endsWith('.json'))
+    .map(f => JSON.parse(fs.readFileSync(path.join(UPLOAD_DIR, f), 'utf-8')));
   res.json(files);
 });
 
