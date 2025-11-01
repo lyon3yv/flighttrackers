@@ -252,7 +252,7 @@
       const closeBtn = document.getElementById("closeLightbox");
 
       try {
-        const res = await fetch("https://flighttrackers-api.developercontactmee.workers.dev/api/gallery");
+        const res = await fetch("https://flighttrackers.es");
         const images = await res.json();
 
         if (!images.length) {
