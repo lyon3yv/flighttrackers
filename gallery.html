@@ -219,7 +219,7 @@
 <body>
   <nav>
     <div class="nav-container">
-      <a href="https://flighttrackers.pages.dev/">← Volver</a>
+      <a href="https://flighttrackers.es/">← Volver</a>
     </div>
     <div class="brand">✈️ FlightTrackers</div>
   </nav>
@@ -252,7 +252,7 @@
       const closeBtn = document.getElementById("closeLightbox");
 
       try {
-        const res = await fetch("https://flighttrackers.es");
+        const res = await fetch("https://flighttrackers-api.developercontactmee.workers.dev/api/gallery");
         const images = await res.json();
 
         if (!images.length) {
